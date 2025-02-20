@@ -1,0 +1,104 @@
+
+#modale{
+    display: none;
+    pointer-events: none;
+}
+#modale.show{
+    display:block;
+    pointer-events: auto;
+    display:flex;
+    flex-direction: column;
+    border: 1px solid black;
+    width: 28%;
+    border-radius: 5px;
+    background-color:#e6ffe6;;
+    padding: 20px;
+}
+
+#modale1{
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+
+#mainHeading{
+    text-align: center;
+    font-weight:600;
+}
+
+#search{
+ width: 300px;
+ border: 1px solid black;
+ border-radius: 5px;
+ padding-left: 10px;
+}
+
+#mainDiv{
+    display: flex;
+    justify-content: center;
+   gap: 15px;
+}
+
+#add{
+    color: azure;
+    background-color:brown ;
+    width: 60px;
+    height: 30px;
+    border: 1px ;
+    border-radius: 5px;
+}
+
+#listDiv{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 20px;
+}
+
+#todoList{
+    font-size:25px;
+    font-weight:bolder;
+    border: 1px solid white;
+    background-color: lightskyblue;
+    width: 150px;
+    height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 2px;
+}
+
+
+#inProgress{
+    font-size:25px;
+    font-weight:bolder;
+    border: 1px solid white;
+    background-color: lightyellow;
+    width: 150px;
+    height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 2px;
+}
+
+
+#done{
+    font-size:25px;
+    font-weight:bolder;
+    border: 1px solid white;
+    background-color: lightsalmon;
+    width: 150px;
+    height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 2px;
+}
+
+.todo{
+       font-size: 20px;
+       list-style-type:none;
+       height:100px;
+       /* margin-top:10px; */
+       border-radius:5px;
+       box-shadow: 5px 5px 5px 5px #888888
+}

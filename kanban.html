@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="kanban.css">
+    <title>KanBan</title>
+</head>
+<body>
+    <h1 id="mainHeading">KANBAN BOARD</h1>
+    <br>
+    <!--Search and add button Start-->
+    <div id="mainDiv">
+        <input id="search" type="text" placeholder="Search">
+    <button id="add">Add</button>
+    </div>
+     <!--Search and add button End-->
+
+        <!--Modale Start-->
+        <div id="modale1">
+        <div id="modale">
+            <h1 style="text-align: center;">Add New Task</h1>
+            <br>
+            <label for="title" style="font-size: 20px; font-weight: bold;">Title:</label>
+            <input id="title" type="text" placeholder="Title of the task" style="height: 25px; width:350px; border :1px solid black  ; border-radius: 5px;"><br>
+            <label for="desc" style="font-size: 20px; font-weight: bold;" >Product Description:</label>
+            <textarea  id="desc" rows="7" cols="45" placeholder="Description of the task" style="height: 110px; width:350px; border :1px solid black  ; border-radius: 5px; padding: 5px;"></textarea><br>
+            <label for="Catagory:" style="font-size: 20px; font-weight: bold;">Catagory:</label>
+            <select  id="select" name="Catagory" style="height: 25px; width:110px; border:1px solid black; border-radius:3px;">
+                <option disabled selected hidden>Select Status</option>
+                <option value="To Do">To Do</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
+            </select><br>
+            <button id="addTask" style="height: 25px;  width: 110px; border: 1px solid black; border-radius: 3px;  align-self:self-end; background-color:blue; color: white; font-size:15px; font-weight: bold;">Add Task</button>
+        </div>
+        </div>
+        <!--Modale End-->
+
+        <!--To Do Container Start-->
+        <div id="listDiv">
+            <ul id="todoList">To Do</ul>
+            <ul id="inProgress">In Progress</ul>
+            <ul id="done">Done</ul>
+        </div>
+
+        
+</body>
+<script src="kanban.js"></script>
+</html>
