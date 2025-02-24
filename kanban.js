@@ -22,10 +22,10 @@ addTaskBtn.addEventListener('click', () => {
         tit: title.value,
         des: desc.value,
     };
+    console.log(obj);
+    mainArray.unshift(obj);
+    console.log(mainArray)
 
-    console.log(obj);
-    mainArray.push(obj);
-    console.log(obj);
 
     // Checking condition
     if (option.selectedIndex === 0) {
@@ -33,35 +33,34 @@ addTaskBtn.addEventListener('click', () => {
         return;
     }
 
-    // Adding value in To do
+                    // Create Element
+    function createTaskElement(title, desc, type) {
+        let task = document.createElement('li');
+        task.draggable = true;
+        task.classList.add('todo');
+        task.innerHTML = `<p>${title}</p><p>${desc}</p>`;
+        task.setAttribute('data-type', type);
+        task.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', task.outerHTML);
+            task.classList.add('dragging');
+        });
+        task.addEventListener('dragend', () => {
+            task.classList.remove('dragging');
+        });
+        return task;
+    }
+    let taskElement = createTaskElement(title.value, desc.value, option.value);
+
+                    // Adding  task to the selected category
     if (option.value === "To Do") {
-        todo = document.createElement('li');
-        todo.classList.add('todo');
-        todo.innerHTML = `<p>${title.value}</p><p>${desc.value}</p>`;
-        todo.setAttribute('data-type', 'todo');
-        todolist.append(todo);
-        modale.classList.remove('show');
+        todolist.appendChild(taskElement);
+    } else if (option.value === "In Progress") {
+        inProgress.appendChild(taskElement);
+    } else if (option.value === "Done") {
+        Done.appendChild(taskElement);
     }
 
-    // Adding value in In Progress
-    if (option.value === "In Progress") {
-        inP = document.createElement('li');
-        inP.innerHTML = `<p>${title.value}</p><p>${desc.value}</p>`;
-        inP.classList.add('todo');
-        inP.setAttribute('data-type', 'in-progress');
-        inProgress.append(inP);
-        modale.classList.remove('show');
-    }
-
-    // Adding value in Done
-    if (option.value === "Done") {
-        don = document.createElement('li');
-        don.innerHTML = `<p>${title.value}</p><p>${desc.value}</p>`;
-        don.classList.add('todo');
-        don.setAttribute('data-type', 'done');
-        Done.append(don);
-        modale.classList.remove('show');
-    }
+    modale.classList.remove('show');
 
     // Reset input fields
     title.value = "";
@@ -69,17 +68,41 @@ addTaskBtn.addEventListener('click', () => {
     option.selectedIndex = 0;
 });
 
-
-            // Search Functionality
-    let search = document.getElementById('search');
-    search.addEventListener('keyup', () => {
+// Search Functionality
+let search = document.getElementById('search');
+search.addEventListener('keyup', () => {
     let searchValue = search.value.toLowerCase();
     document.querySelectorAll('li').forEach(item => {
-    let itemTitle = item.textContent.toLowerCase();
-    if (itemTitle.includes(searchValue)) {
-            item.style.display = '';
-        } else {
-            item.style.display = 'none';
-        }
+        let itemTitle = item.textContent.toLowerCase();
+        item.style.display = itemTitle.includes(searchValue) ? '' : 'none';
     });
 });
+
+// Drag and Drop Functionality
+document.querySelectorAll('.list').forEach(list => {
+    list.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    });
+    list.addEventListener('drop', (e) => {
+        e.preventDefault();
+        let taskHTML = e.dataTransfer.getData('text/plain');
+        list.innerHTML += taskHTML;
+        document.querySelectorAll('.dragging').forEach(task => task.remove());
+        addDragEvents();
+    });
+});
+
+// Function to add drag events after dropping
+function addDragEvents() {
+    document.querySelectorAll('li').forEach(task => {
+        task.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', task.outerHTML);
+            task.classList.add('dragging');
+        });
+        task.addEventListener('dragend', () => {
+            task.classList.remove('dragging');
+        });
+    });
+}
+
+addDragEvents();
