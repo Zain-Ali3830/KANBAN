@@ -1,133 +1,153 @@
-// Get elements
+// Important Elements ko get kar rahe hain
 let addBtn = document.getElementById('add');
 let addTaskBtn = document.getElementById('addTask');
 let modale = document.getElementById('modale');
 let option = document.getElementById('select');
-let todolist = document.getElementById('todoList');
+let todoList = document.getElementById('todoList');
 let inProgress = document.getElementById('inProgress');
 let doneList = document.getElementById('done');
-let editTaskElement = null;
+let editTask = null;
+let draggedTask = null;
 
-// Show modal for adding/editing task
-addBtn.addEventListener('click', () => {
+// When "Add Task"  button click to open modal
+addBtn.onclick = function () {
     modale.classList.add('show');
-    editTaskElement = null;
-    resetFields();
-});
+    clearInputs();
+    editTask = null;
+};
 
-// Add or edit task
-    addTaskBtn.addEventListener('click', () => {
+// When clcik "Add Task" button in modal
+addTaskBtn.onclick = function () {
     let title = document.getElementById('title').value;
     let desc = document.getElementById('desc').value;
-    if (title.trim() === "" || desc.trim() === "" || option.selectedIndex === 0) {
-        alert("Please fill in all fields and select an option.");
+    let category = option.value;
+    if (title === '' || desc === '' || category === 'Select') {
+        alert('Please fill all fields and select a category.');
         return;
     }
-    if (editTaskElement) {
-        updateTask(editTaskElement, title, desc, option.value);
+    if (editTask) {
+        editTask.querySelector('.task-title').innerText = title;
+        editTask.querySelector('.task-desc').innerText = desc;
+        moveTask(editTask, category);
     } else {
-        let taskElement = createTaskElement(title, desc, option.value);
-        appendTaskToCategory(taskElement, option.value);
+        let task = createTask(title, desc);
+        addTaskToCategory(task, category);
     }
     modale.classList.remove('show');
-    resetFields();
-});
+    clearInputs();
+};
 
-// Create task element
-    function createTaskElement(title, desc, category) {
+// Make task
+function createTask(title, desc) {
     let task = document.createElement('li');
-    task.classList.add('task');
-    task.setAttribute('draggable', 'true');
-    task.innerHTML = `
-        <p class="task-title">${title}</p>
-        <p class="task-desc">${desc}</p>
-        <button class="edit-btn">Edit</button>
-    `;
-    task.querySelector('.edit-btn').addEventListener('click', () => {
-        editTaskElement = task;
+    task.className = 'task';
+    task.draggable = true;
+
+    let titleElem = document.createElement('p');
+    titleElem.className = 'task-title';
+    titleElem.innerText = title;
+
+    let descElem = document.createElement('p');
+    descElem.className = 'task-desc';
+    descElem.innerText = desc;
+
+    let editBtn = document.createElement('button');
+    editBtn.innerText = 'Edit';
+    editBtn.onclick = function () {
         document.getElementById('title').value = title;
         document.getElementById('desc').value = desc;
-        option.value = category;
+        option.value = findCategory(task);
         modale.classList.add('show');
-        console.log("hello");        
-    });
-    addDragEventsToTask(task);
+        editTask = task;
+    };
+    task.appendChild(titleElem);
+    task.appendChild(descElem);
+    task.appendChild(editBtn);
+
+    task.ondragstart = function () {
+        draggedTask = task;
+        task.classList.add('dragging');
+    };
+    task.ondragend = function () {
+        draggedTask = null;
+        task.classList.remove('dragging');
+    };
     return task;
 }
 
-// Update task
-function updateTask(task, title, desc, category) {
-    task.querySelector('.task-title').textContent = title;
-    task.querySelector('.task-desc').textContent = desc;
-    let previousCategory = task.getAttribute('data-type');
-    task.setAttribute('data-type', category);
-    if (previousCategory !== category) {
-        task.remove();
-        appendTaskToCategory(task, category);
-    }
-}
-
-// Append task to category
-function appendTaskToCategory(task, category) {
-    if (category === "To Do") {
-        todolist.appendChild(task);
-    } else if (category === "In Progress") {
+// Add task in catagory
+function addTaskToCategory(task, category) {
+    if (category === 'To Do') {
+        todoList.appendChild(task);
+    } else if (category === 'In Progress') {
         inProgress.appendChild(task);
-    } else if (category === "Done") {
+    } else if (category === 'Done') {
         doneList.appendChild(task);
     }
 }
 
-// Reset input fields
-function resetFields() {
-    document.getElementById('title').value = "";
-    document.getElementById('desc').value = "";
-    option.selectedIndex = 0;
+// moving task
+function moveTask(task, category) {
+    task.remove();
+    addTaskToCategory(task, category);
 }
 
-// Add drag events to task
-function addDragEventsToTask(task) {
-    task.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', task.outerHTML);
-        task.classList.add('dragging');
-    });
-    task.addEventListener('dragend', () => {
-        task.classList.remove('dragging');
-    });
+// function finding caagory
+function findCategory(task) {
+    if (todoList.contains(task)) return 'To Do';
+    if (inProgress.contains(task)) return 'In Progress';
+    if (doneList.contains(task)) return 'Done';
+    return 'Select';
 }
 
-// Drag and drop functionality
-document.querySelectorAll('.list').forEach(list => {
-    list.addEventListener('dragover', (e) => {
+// Drag and Drop 
+let allLists = document.querySelectorAll('.list');
+allLists.forEach(list => {
+    list.ondragover = function (e) {
         e.preventDefault();
-    });
-    list.addEventListener('drop', (e) => {
-        e.preventDefault();
-        let taskHTML = e.dataTransfer.getData('text/plain');
-        let taskElement = document.createElement('div');
-        taskElement.innerHTML = taskHTML;
-        let task = taskElement.firstChild;
-        list.appendChild(task);
-        document.querySelector('.dragging').remove();
-        addDragEventsToTask(task);
-    });
+        const afterElement = getDragAfterElement(list, e.clientY);
+        if (afterElement == null) {
+            list.appendChild(draggedTask);
+        } else {
+            list.insertBefore(draggedTask, afterElement);
+        }
+    };
+    list.ondrop = function () {
+        draggedTask = null;
+    };
 });
 
-// Initialize drag events for existing tasks
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.task').forEach(task => {
-        task.setAttribute('draggable', 'true');
-        addDragEventsToTask(task);
-    });
-});
+// function to insert task on position
+function getDragAfterElement(list, y) {
+    let tasks = [...list.querySelectorAll('.task:not(.dragging)')];
+    return tasks.reduce((closest, child) => {
+        let box = child.getBoundingClientRect();
+        let offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
 
-//         Search
-
-let search = document.getElementById('search');
-search.addEventListener('keyup', () => {
-    let searchValue = search.value.toLowerCase();
-    document.querySelectorAll('li').forEach(item => {
-        let itemTitle = item.textContent.toLowerCase();
-        item.style.display = itemTitle.includes(searchValue) ? '' : 'none';
+// Search Task
+document.getElementById('search').onkeyup = function () {
+    let searchValue = document.getElementById('search').value.toLowerCase();
+    let tasks = document.querySelectorAll('.task');
+    tasks.forEach(task => {
+    let title = task.querySelector('.task-title').innerText.toLowerCase();
+    let desc = task.querySelector('.task-desc').innerText.toLowerCase();
+    if (title.includes(searchValue) || desc.includes(searchValue)) {
+            task.style.display = '';
+        } else {
+            task.style.display = 'none';
+        }
     });
-});
+};
+// Input fields clear
+function clearInputs() {
+    document.getElementById('title').value = '';
+    document.getElementById('desc').value = '';
+    option.value = 'Select';
+}
