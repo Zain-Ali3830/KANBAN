@@ -11,7 +11,7 @@
     border: 1px solid black;
     width: 28%;
     border-radius: 5px;
-    background-color:#e6ffe6;;
+    background-color:0 ,0 ,0 ,0.5;;
     padding: 20px;
 }
 
@@ -101,4 +101,31 @@
        /* margin-top:10px; */
        border-radius:5px;
        box-shadow: 5px 5px 5px 5px #888888
+}
+
+
+
+
+.task {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 0;
+    list-style: none;
+}
+
+.edit-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background-color: #45a049;
+}
+
+.dragging {
+    opacity: 0.5;
 }
